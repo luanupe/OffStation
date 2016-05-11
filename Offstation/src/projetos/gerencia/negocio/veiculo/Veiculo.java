@@ -1,5 +1,7 @@
 package projetos.gerencia.negocio.veiculo;
 
+import java.util.List;
+import projetos.gerencia.exceptions.ComprarException;
 import projetos.gerencia.negocio.cliente.ICliente;
 import projetos.gerencia.persistencia.veiculo.PersistirOrcamento;
 
@@ -20,6 +22,7 @@ public final class Veiculo implements IVeiculo {
         this.setDescricao(descricao);
         this.setEntrada(entrada);
         this.setSaida(saida);
+        this.setPersistencia(PersistirOrcamento.getInstancia(this));
     }
 
     @Override
@@ -76,12 +79,23 @@ public final class Veiculo implements IVeiculo {
         this.saida = saida;
     }
 
-    private PersistirOrcamento getPersistencia() {
+    @Override
+    public PersistirOrcamento getPersistencia() {
         return this.persistencia;
     }
 
     private void setPersistencia(PersistirOrcamento persistencia) {
         this.persistencia = persistencia;
+    }
+
+    @Override
+    public List<IOrcamento> pegarOrcamentos() {
+        return this.getPersistencia().pegarOrcamentos();
+    }
+
+    @Override
+    public void adicionarProduto(IOrcamento orcamento) throws ComprarException {
+        this.getPersistencia().adicionarProduto(orcamento);
     }
 
 }

@@ -18,10 +18,42 @@ import projetos.gerencia.persistencia.produto.PersistirProduto;
 
 public class PersistirOrcamento {
 
+    private final static Map<IVeiculo, PersistirOrcamento> INSTANCIAS = new HashMap();
     private IVeiculo veiculo;
 
     public PersistirOrcamento(IVeiculo veiculo) throws ObjetoInvalidoException {
         this.setVeiculo(veiculo);
+    }
+
+    public static PersistirOrcamento getInstancia(IVeiculo veiculo) {
+        PersistirOrcamento persistencia = PersistirOrcamento.INSTANCIAS.get(veiculo);
+        if ((persistencia == null)) {
+            try {
+                persistencia = new PersistirOrcamento(veiculo);
+                PersistirOrcamento.INSTANCIAS.put(veiculo, persistencia);
+            } catch (ObjetoInvalidoException error) {
+                Principal.getInstancia().log("Não foi possível gerar uma persistência para esse veículo. Erro: " + error.getMessage());
+            }
+        }
+        return persistencia;
+    }
+    
+    public void removerProduto(IProduto produto) {
+        if ((this.getVeiculo() != null)) {
+            Conectar.getInstancia().getJdbc().beginTransaction();
+            
+            try {
+                
+            } catch (JdbcException error) {
+                if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                    Conectar.getInstancia().getJdbc().rollbackTransaction();
+                }
+            } finally {
+                if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                    Conectar.getInstancia().getJdbc().commitTransaction();
+                }
+            }
+        }
     }
 
     public void adicionarProduto(IOrcamento orcamento) throws ComprarException {
@@ -30,11 +62,12 @@ public class PersistirOrcamento {
                 Conectar.getInstancia().getJdbc().beginTransaction();
 
                 try {
-                    if ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `orcamentos ( `id`, `veiculoID`, `pecaID`, `quantidade` ) VALUES ( NULL, ?, ?, ? )`", new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()}) == 1)) {
+                    if ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `orcamentos` ( `id`, `veiculoID`, `pecaID`, `quantidade` ) VALUES ( NULL, ?, ?, ? )`", new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()}) == 1)) {
                         Principal.getInstancia().log(new StringBuilder().append("Orçamento inserido com sucesso no veículo '").append(this.getVeiculo().getPlaca()).append("'").toString());
                     } else {
-                        Principal.getInstancia().log("Erro ao executar a inserção no banco de dados.");
-                        throw new ComprarException("Erro ao inserir o produto.");
+                        ComprarException error = new ComprarException("Produto não pode ser inserido ao banco de dados.");
+                        Principal.getInstancia().log(error.getMensagem());
+                        throw error;
                     }
                 } catch (JdbcException error) {
                     Principal.getInstancia().log(new StringBuilder().append("Erro na consulta. Erro: ").append(error.getMessage()).toString(), "ERROR");
@@ -42,7 +75,9 @@ public class PersistirOrcamento {
                         Conectar.getInstancia().getJdbc().rollbackTransaction();
                     }
                 } finally {
-                    Conectar.getInstancia().getJdbc().commitTransaction();
+                    if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                        Conectar.getInstancia().getJdbc().commitTransaction();
+                    }
                 }
             } else {
                 Principal.getInstancia().log("Veiculo ainda não está salvo no banco de dados.");
@@ -65,6 +100,7 @@ public class PersistirOrcamento {
             }
 
             orcamento.add(new Orcamento(this.getVeiculo(), produto, resultados.getInt("id"), resultados.getInt("quantidade"), resultados.getString("data")));
+            Principal.getInstancia().log(new StringBuilder().append("Orcamento do produto '").append(produto.getNome()).append("' adicionada na lista.").toString());
         }
 
         resultados.close();
@@ -78,8 +114,6 @@ public class PersistirOrcamento {
     private void setVeiculo(IVeiculo veiculo) throws ObjetoInvalidoException {
         if ((veiculo == null)) {
             throw (new ObjetoInvalidoException("O veículo não pode ser uma instancia nula."));
-        } else if ((veiculo.getId() <= 0)) {
-            throw (new ObjetoInvalidoException("O veículo deve estar persistido no banco de dados."));
         } else {
             this.veiculo = veiculo;
         }

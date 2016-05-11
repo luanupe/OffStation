@@ -37,12 +37,14 @@ public class PersistirVeiculo {
         return false;
     }
 
-    private boolean inserir(IVeiculo cliente) {
-        return true;
+    private boolean inserir(IVeiculo veiculo) {
+        return ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `veiculos` ( `id`, `clienteID`, `placa`, `descricao`, `saida` ) VALUES ( NULL, ?, ?, ?, NULL )",
+                new Object[]{veiculo.getDono().getId(), veiculo.getPlaca(), veiculo.getDescricao()})) == 1);
     }
 
-    private boolean atualizar(IVeiculo cliente) {
-        return true;
+    private boolean atualizar(IVeiculo veiculo) {
+        return ((Conectar.getInstancia().getJdbc().execute("UPDATE `veiculos` SET `placa` = ?, `descricao` = ?, `saida` = ? WHERE ( `id` = ? )",
+                new Object[]{veiculo.getDono().getId(), veiculo.getPlaca(), veiculo.getDescricao(), veiculo.getId()})) == 1);
     }
 
     private IVeiculo construir(QueryResult resultado, ICliente dono, boolean fechar) {
@@ -93,10 +95,13 @@ public class PersistirVeiculo {
                 IVeiculo veiculo = this.construir(resultados, dono, false);
                 if ((veiculo != null)) {
                     veiculos.put(veiculo.getId(), veiculo);
+                    Principal.getInstancia().log(new StringBuilder().append("Veículo '").append(veiculo.getPlaca()).append("' de id '").append(veiculo.getId()).append("' adicionado com sucesso.").toString(), "LISTAR");
                 }
             }
 
             resultados.close();
+        } else {
+            Principal.getInstancia().log("Não é possível recuperar o veículo, pois, o dono não existe.");
         }
 
         return veiculos;
