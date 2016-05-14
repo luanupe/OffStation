@@ -2,7 +2,7 @@ package projetos.gerencia.negocio.cliente;
 
 public final class Cliente implements ICliente {
 
-    private int id;
+    private long id;
     private String nome;
     private String sobrenome;
     private String email;
@@ -11,7 +11,7 @@ public final class Cliente implements ICliente {
         this(0, nome, sobrenome, email);
     }
 
-    public Cliente(int id, String nome, String sobrenome, String email) {
+    public Cliente(long id, String nome, String sobrenome, String email) {
         this.setId(id);
         this.setNome(nome);
         this.setSobrenome(sobrenome);
@@ -19,17 +19,18 @@ public final class Cliente implements ICliente {
     }
 
     @Override
-    public int getId() {
-        return id;
+    public long getId() {
+        return this.id;
     }
 
-    private void setId(int id) {
+    @Override
+    public void setId(long id) {
         this.id = id;
     }
 
     @Override
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     private void setNome(String nome) {
@@ -38,7 +39,7 @@ public final class Cliente implements ICliente {
 
     @Override
     public String getSobrenome() {
-        return sobrenome;
+        return this.sobrenome;
     }
 
     private void setSobrenome(String sobrenome) {
@@ -53,7 +54,7 @@ public final class Cliente implements ICliente {
 
     @Override
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public void setEmail(String email) {

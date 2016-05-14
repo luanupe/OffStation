@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import jdbchelper.JdbcException;
 import jdbchelper.QueryResult;
 import projetos.gerencia.Principal;
 import projetos.gerencia.exceptions.ComprarException;
@@ -37,22 +36,10 @@ public class PersistirOrcamento {
         }
         return persistencia;
     }
-    
+
     public void removerProduto(IProduto produto) {
         if ((this.getVeiculo() != null)) {
-            Conectar.getInstancia().getJdbc().beginTransaction();
-            
-            try {
-                
-            } catch (JdbcException error) {
-                if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
-                    Conectar.getInstancia().getJdbc().rollbackTransaction();
-                }
-            } finally {
-                if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
-                    Conectar.getInstancia().getJdbc().commitTransaction();
-                }
-            }
+
         }
     }
 
@@ -60,25 +47,9 @@ public class PersistirOrcamento {
         if ((this.getVeiculo() != null)) {
             if ((this.getVeiculo().getId() > 0)) {
                 Conectar.getInstancia().getJdbc().beginTransaction();
-
-                try {
-                    if ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `orcamento` ( `id`, `veiculoID`, `pecaID`, `quantidade`, `data` ) VALUES ( NULL, ?, ?, ?, NOW() )`", new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()}) == 1)) {
-                        Principal.getInstancia().log(new StringBuilder().append("Orçamento inserido com sucesso no veículo '").append(this.getVeiculo().getPlaca()).append("'").toString());
-                    } else {
-                        ComprarException error = new ComprarException("Produto não pode ser inserido ao banco de dados.");
-                        Principal.getInstancia().log(error.getMensagem());
-                        throw error;
-                    }
-                } catch (JdbcException error) {
-                    Principal.getInstancia().log(new StringBuilder().append("Erro na consulta. Erro: ").append(error.getMessage()).toString(), "ERROR");
-                    if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
-                        Conectar.getInstancia().getJdbc().rollbackTransaction();
-                    }
-                } finally {
-                    if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
-                        Conectar.getInstancia().getJdbc().commitTransaction();
-                    }
-                }
+                String sql = "INSERT INTO `orcamento` ( `id`, `veiculoID`, `pecaID`, `quantidade`, `data` ) VALUES ( NULL, ?, ?, ?, NOW() )";
+                Object[] params = new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()};
+                Principal.getInstancia().gerenciarTransacao(sql, params);
             } else {
                 Principal.getInstancia().log("Veiculo ainda não está salvo no banco de dados.");
             }

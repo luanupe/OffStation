@@ -3,6 +3,7 @@ package projetos.gerencia.apresentacao;
 import java.util.Map;
 import jdbchelper.JdbcException;
 import projetos.gerencia.Principal;
+import projetos.gerencia.exceptions.ProdutoException;
 import projetos.gerencia.negocio.produto.IProduto;
 import projetos.gerencia.negocio.produto.Peca;
 import projetos.gerencia.negocio.produto.Servico;
@@ -23,7 +24,7 @@ public class ControlarProduto {
             Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' salvo com sucesso! Novo ID: ").append(produto.getId()).toString());
         } catch (JdbcException error) {
             Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' não pode ser salvo.").toString());
-            produto = null;
+            throw (new ProdutoException("Não foi possível salvar o produto, tente novamente."));
         }
         return produto;
     }

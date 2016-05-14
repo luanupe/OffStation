@@ -1,6 +1,6 @@
 package projetos.gerencia.exceptions;
 
-public class LoginException extends Exception {
+public class LoginException extends RuntimeException {
     
     public static final String SEM_PERMISSAO = "Você não tem permissão suficiente.";
     public static final int SEM_PERMISSAO_ID = 1;

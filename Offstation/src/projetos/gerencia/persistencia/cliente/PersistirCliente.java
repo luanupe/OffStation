@@ -24,27 +24,31 @@ public class PersistirCliente {
         return PersistirCliente.INSTANCIA;
     }
 
-    public boolean salvar(ICliente cliente) {
+    public ICliente salvar(ICliente cliente) {
         if ((cliente != null)) {
             if ((cliente.getId() > 0)) {
-                return this.atualizar(cliente);
+                cliente = this.atualizar(cliente);
             }
-            return this.inserir(cliente);
+            cliente = this.inserir(cliente);
+        } else {
+            Principal.getInstancia().log("Nao é possível salvar uma instancia nula...", "CLIENTE");
         }
 
-        Principal.getInstancia().log("Nao é possível salvar uma instancia nula...");
-        return false;
+        return cliente;
     }
 
-    private boolean inserir(ICliente cliente) {
-        return (Conectar.getInstancia().getJdbc().execute("INSERT INTO `clientes` ( `id`, `nome`, `sobrenome`, `email` ) VALUES ( NULL, ?, ?, ? )",
-                new Object[]{cliente.getNome(), cliente.getSobrenome(), cliente.getEmail()}) == 1);
-
+    private ICliente inserir(ICliente cliente) {
+        String sql = ("INSERT INTO `clientes` ( `id`, `nome`, `sobrenome`, `email` ) VALUES ( NULL, ?, ?, ? )");
+        Object[] params = new Object[]{cliente.getNome(), cliente.getSobrenome(), cliente.getEmail()};
+        cliente.setId(Principal.getInstancia().gerenciarTransacao(sql, params));
+        return cliente;
     }
 
-    private boolean atualizar(ICliente cliente) {
-        return (Conectar.getInstancia().getJdbc().execute("UPDATE `clientes` SET ( `nome` = ? ), ( `sobrenome` = ? ), ( `email` = ? ) WHERE ( `id` = ? )",
-                new Object[]{cliente.getNome(), cliente.getSobrenome(), cliente.getEmail()}) == 1);
+    private ICliente atualizar(ICliente cliente) {
+        String sql = ("UPDATE `clientes` SET ( `nome` = ? ), ( `sobrenome` = ? ), ( `email` = ? ) WHERE ( `id` = ? )");
+        Object[] params = new Object[]{cliente.getNome(), cliente.getSobrenome(), cliente.getEmail()};
+        Principal.getInstancia().gerenciarTransacao(sql, params);
+        return cliente;
     }
 
     public boolean remover(ICliente cliente) {
@@ -54,7 +58,7 @@ public class PersistirCliente {
         return false;
     }
 
-    public boolean remover(int id) {
+    public boolean remover(long id) {
         return (Conectar.getInstancia().getJdbc().execute("DELETE FROM `clientes` WHERE ( `id` = ? )", new Object[]{id}) == 1);
     }
 
@@ -62,6 +66,7 @@ public class PersistirCliente {
         ICliente cliente = null;
         if ((resultado != null)) {
             cliente = new Cliente(resultado.getInt("id"), resultado.getString("nome"), resultado.getString("sobrenome"), resultado.getString("email"));
+            Principal.getInstancia().log(new StringBuilder().append("Construindo o CLIENTE com nome '").append(cliente.getNomeCompleto()).append("' e ID ").append(cliente.getId()).append(".").toString(), "PRODUTO");
             if ((fechar)) {
                 resultado.close();
             }
@@ -70,8 +75,10 @@ public class PersistirCliente {
     }
 
     public ICliente recuperar(int id) {
+        Principal.getInstancia().log(new StringBuilder().append("Recuperando CLIENTE com ID '").append(id).append("' no banco de dados.").toString(), "CLIENTE");
         QueryResult resultado = Conectar.getInstancia().getJdbc().query("SELECT * FROM `clientes` WHERE ( `id` = ? )", new Object[]{id});
         ICliente cliente = null;
+
         if ((resultado.next())) {
             cliente = this.construir(resultado, true);
         }
@@ -80,8 +87,10 @@ public class PersistirCliente {
     }
 
     public ICliente recuperar(String nome) {
+        Principal.getInstancia().log(new StringBuilder().append("Recuperando CLIENTE com NOME '").append(nome).append("' no banco de dados.").toString(), "CLIENTE");
         QueryResult resultado = Conectar.getInstancia().getJdbc().query("SELECT * FROM `clientes` WHERE ( `nome` = ? )", new Object[]{nome});
         ICliente cliente = null;
+
         if ((resultado.next())) {
             cliente = this.construir(resultado, true);
         }
@@ -89,8 +98,8 @@ public class PersistirCliente {
         return cliente;
     }
 
-    private Map<Integer, ICliente> recuperarTodos(QueryResult resultados) {
-        Map<Integer, ICliente> clientes = new HashMap();
+    private Map<Long, ICliente> recuperarTodos(QueryResult resultados) {
+        Map<Long, ICliente> clientes = new HashMap();
         while (resultados.next()) {
             ICliente cliente = this.construir(resultados, false);
             clientes.put(cliente.getId(), cliente);
@@ -98,16 +107,18 @@ public class PersistirCliente {
         return clientes;
     }
 
-    public Map<Integer, ICliente> recuperarTodos(String nome) {
+    public Map<Long, ICliente> recuperarTodos(String nome) {
+        Principal.getInstancia().log(new StringBuilder().append("Recuperando TODOS OS CLIENTES que contenha '").append(nome).append("' no nome.").toString(), "CLIENTE");
         QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT * FROM `clientes` WHERE ( `nome` = ? ) OR ( `nome` LIKE ? )", new Object[]{nome, (new StringBuilder().append("%").append(nome).append("%").toString())});
-        Map<Integer, ICliente> clientes = this.recuperarTodos(resultados);
+        Map<Long, ICliente> clientes = this.recuperarTodos(resultados);
         resultados.close();
         return clientes;
     }
 
-    public Map<Integer, ICliente> recuperarTodos() {
+    public Map<Long, ICliente> recuperarTodos() {
+        Principal.getInstancia().log("Recuperando TODOS OS CLIENTES no banco de dados.", "CLIENTE");
         QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT * FROM `clientes`");
-        Map<Integer, ICliente> clientes = this.recuperarTodos(resultados);
+        Map<Long, ICliente> clientes = this.recuperarTodos(resultados);
         resultados.close();
         return clientes;
     }

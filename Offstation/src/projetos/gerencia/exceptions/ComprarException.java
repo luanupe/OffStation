@@ -1,6 +1,6 @@
 package projetos.gerencia.exceptions;
 
-public class ComprarException extends Exception {
+public class ComprarException extends RuntimeException {
 
     private String mensagem;
     

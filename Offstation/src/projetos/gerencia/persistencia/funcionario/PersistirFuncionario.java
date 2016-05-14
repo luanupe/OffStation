@@ -10,9 +10,9 @@ import projetos.gerencia.negocio.funcionario.Mecanico;
 import projetos.gerencia.persistencia.Conectar;
 
 public class PersistirFuncionario {
-    
+
     private static PersistirFuncionario INSTANCIA = null;
-    
+
     private PersistirFuncionario() {
     }
 
@@ -23,20 +23,20 @@ public class PersistirFuncionario {
         }
         return PersistirFuncionario.INSTANCIA;
     }
-    
-    public boolean salvar(IFuncionario funcionario) {
+
+    public IFuncionario salvar(IFuncionario funcionario) {
         if ((funcionario != null)) {
-            
+
         }
-        return false;
+        return funcionario;
     }
 
-    private boolean inserir(IFuncionario cliente) {
-        return false;
+    private IFuncionario inserir(IFuncionario funcionario) {
+        return funcionario;
     }
 
-    private boolean atualizar(IFuncionario cliente) {
-        return false;
+    private IFuncionario atualizar(IFuncionario funcionario) {
+        return funcionario;
     }
 
     private IFuncionario construir(QueryResult resultado) {
@@ -55,16 +55,18 @@ public class PersistirFuncionario {
 
         return funcionario;
     }
-    
+
     public IFuncionario recuperar(int cpf) {
+        Principal.getInstancia().log(new StringBuilder().append("Recuperando FUNCIONARO com CPF '").append(cpf).append("' no banco de dados.").toString(), "FUNCIONARIO");
         QueryResult resultado = Conectar.getInstancia().getJdbc().query("SELECT * FROM `funcionarios` WHERE ( `cpf` = ? )", new Object[]{cpf});
         IFuncionario funcionario = null;
+
         if ((resultado.next())) {
             funcionario = this.construir(resultado);
         }
-        
+
         resultado.close();
         return funcionario;
     }
-    
+
 }

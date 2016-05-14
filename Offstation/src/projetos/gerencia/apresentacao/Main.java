@@ -8,12 +8,12 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    //Testando Matheus
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("ui/FormLogin.fxml"));
         Scene scene = new Scene(root);
-        
+
         stage.setScene(scene);
         stage.setTitle("LOGIN");
 
@@ -22,7 +22,7 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.setMaximized(false);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("ui/icone.png")));
-        
+
         stage.show();
     }
 

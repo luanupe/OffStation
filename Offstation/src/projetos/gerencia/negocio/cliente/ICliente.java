@@ -2,7 +2,9 @@ package projetos.gerencia.negocio.cliente;
 
 public interface ICliente {
 
-    public int getId();
+    public long getId();
+
+    public void setId(long id);
 
     public String getNome();
 
