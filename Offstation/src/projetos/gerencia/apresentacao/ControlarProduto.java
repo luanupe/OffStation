@@ -21,10 +21,10 @@ public class ControlarProduto {
     public IProduto salvar(IProduto produto) {
         try {
             PersistirProduto.getInstancia().salvar(produto);
-            Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' salvo com sucesso! Novo ID: ").append(produto.getId()).toString());
+            Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' salvo com sucesso! Novo ID: ").append(produto.getId()).toString(), "PRODUTO");
         } catch (JdbcException error) {
-            Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' não pode ser salvo.").toString());
-            throw (new ProdutoException("Não foi possível salvar o produto, tente novamente."));
+            Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' não pode ser salvo. Erro: ").append(error.getMessage()).toString(), "PRODUTO");
+            throw (new ProdutoException("Não foi possível salvar o produto. Tente novamente mais tarde."));
         }
         return produto;
     }

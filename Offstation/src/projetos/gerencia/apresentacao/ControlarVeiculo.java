@@ -3,6 +3,7 @@ package projetos.gerencia.apresentacao;
 import java.util.Map;
 import jdbchelper.JdbcException;
 import projetos.gerencia.Principal;
+import projetos.gerencia.exceptions.VeiculoException;
 import projetos.gerencia.negocio.cliente.ICliente;
 import projetos.gerencia.negocio.veiculo.IVeiculo;
 import projetos.gerencia.negocio.veiculo.Veiculo;
@@ -17,10 +18,10 @@ public class ControlarVeiculo {
     public IVeiculo salvar(IVeiculo veiculo) {
         try {
             PersistirVeiculo.getInstancia().salvar(veiculo);
-            Principal.getInstancia().log(new StringBuilder().append("Veículo '").append(veiculo.getPlaca()).append("' salvo com sucesso! Novo ID: ").append(veiculo.getId()).toString());
+            Principal.getInstancia().log(new StringBuilder().append("Veículo '").append(veiculo.getPlaca()).append("' salvo com sucesso! Novo ID: ").append(veiculo.getId()).toString(), "VEÍCULO");
         } catch (JdbcException error) {
-            Principal.getInstancia().log(new StringBuilder().append("Veículo '").append(veiculo.getPlaca()).append("' não pode ser salvo.").toString());
-            veiculo = null;
+            Principal.getInstancia().log(new StringBuilder().append("Veículo '").append(veiculo.getPlaca()).append("' não pode ser salvo. Erro: ").append(error.getMessage()).toString(), "VEÍCULO");
+            throw (new VeiculoException("Não foi possível salvar o produto. Tente novamente mais tarde."));
         }
         return veiculo;
     }
