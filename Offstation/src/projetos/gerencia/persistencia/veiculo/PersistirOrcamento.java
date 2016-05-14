@@ -62,7 +62,7 @@ public class PersistirOrcamento {
                 Conectar.getInstancia().getJdbc().beginTransaction();
 
                 try {
-                    if ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `orcamentos` ( `id`, `veiculoID`, `pecaID`, `quantidade` ) VALUES ( NULL, ?, ?, ? )`", new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()}) == 1)) {
+                    if ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `orcamento` ( `id`, `veiculoID`, `pecaID`, `quantidade`, `data` ) VALUES ( NULL, ?, ?, ?, NOW() )`", new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()}) == 1)) {
                         Principal.getInstancia().log(new StringBuilder().append("Orçamento inserido com sucesso no veículo '").append(this.getVeiculo().getPlaca()).append("'").toString());
                     } else {
                         ComprarException error = new ComprarException("Produto não pode ser inserido ao banco de dados.");
@@ -88,12 +88,12 @@ public class PersistirOrcamento {
     }
 
     public List<IOrcamento> pegarOrcamentos() {
-        Map<Integer, IProduto> produtos = new HashMap();
+        Map<Long, IProduto> produtos = new HashMap();
         List<IOrcamento> orcamento = new ArrayList();
-        QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT * FROM `orcamentos` WHERE ( `veiculoID` = ? )", new Object[]{this.getVeiculo().getId()});
+        QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT * FROM `orcamento` WHERE ( `veiculoID` = ? )", new Object[]{this.getVeiculo().getId()});
 
         while (resultados.next()) {
-            IProduto produto = produtos.get(resultados.getInt("pecaID"));
+            IProduto produto = produtos.get(resultados.getLong("pecaID"));
             if ((produto == null)) {
                 produto = PersistirProduto.getInstancia().recuperar(resultados.getInt("pecaID"));
                 produtos.put(produto.getId(), produto);

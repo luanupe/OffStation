@@ -2,6 +2,7 @@ package projetos.gerencia.persistencia.veiculo;
 
 import java.util.HashMap;
 import java.util.Map;
+import jdbchelper.JdbcException;
 import jdbchelper.QueryResult;
 import projetos.gerencia.Principal;
 import projetos.gerencia.apresentacao.ControlarCliente;
@@ -25,26 +26,56 @@ public class PersistirVeiculo {
         return PersistirVeiculo.INSTANCIA;
     }
 
-    public boolean salvar(IVeiculo veiculo) {
+    public IVeiculo salvar(IVeiculo veiculo) {
         if ((veiculo != null)) {
             if ((veiculo.getId() > 0)) {
-                return this.atualizar(veiculo);
+                veiculo = this.atualizar(veiculo);
             }
-            return this.inserir(veiculo);
+            veiculo = this.inserir(veiculo);
+        } else {
+            Principal.getInstancia().log("Nao é possível persistir uma instancia nula...");
         }
 
-        Principal.getInstancia().log("Nao é possível salvar uma instancia nula...");
-        return false;
+        return veiculo;
     }
 
-    private boolean inserir(IVeiculo veiculo) {
-        return ((Conectar.getInstancia().getJdbc().execute("INSERT INTO `veiculos` ( `id`, `clienteID`, `placa`, `descricao`, `saida` ) VALUES ( NULL, ?, ?, ?, NULL )",
-                new Object[]{veiculo.getDono().getId(), veiculo.getPlaca(), veiculo.getDescricao()})) == 1);
+    private IVeiculo inserir(IVeiculo veiculo) {
+        try {
+            Conectar.getInstancia().getJdbc().beginTransaction();
+            Conectar.getInstancia().getJdbc().execute("INSERT INTO `veiculos` ( `id`, `clienteID`, `placa`, `descricao`, `saida` ) VALUES ( NULL, ?, ?, ?, NULL )",
+                    new Object[]{veiculo.getDono().getId(), veiculo.getPlaca(), veiculo.getDescricao()});
+        } catch (JdbcException error) {
+            if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                Conectar.getInstancia().getJdbc().rollbackTransaction();
+            }
+            throw error;
+        } finally {
+            if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                veiculo.setId(Conectar.getInstancia().getJdbc().getLastInsertId());
+                Conectar.getInstancia().getJdbc().commitTransaction();
+            }
+        }
+
+        return veiculo;
     }
 
-    private boolean atualizar(IVeiculo veiculo) {
-        return ((Conectar.getInstancia().getJdbc().execute("UPDATE `veiculos` SET `placa` = ?, `descricao` = ?, `saida` = ? WHERE ( `id` = ? )",
-                new Object[]{veiculo.getDono().getId(), veiculo.getPlaca(), veiculo.getDescricao(), veiculo.getId()})) == 1);
+    private IVeiculo atualizar(IVeiculo veiculo) {
+        try {
+            Conectar.getInstancia().getJdbc().beginTransaction();
+            Conectar.getInstancia().getJdbc().execute("UPDATE `veiculos` SET `placa` = ?, `descricao` = ?, `saida` = ? WHERE ( `id` = ? )",
+                    new Object[]{veiculo.getDono().getId(), veiculo.getPlaca(), veiculo.getDescricao(), veiculo.getId()});
+        } catch (JdbcException error) {
+            if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                Conectar.getInstancia().getJdbc().rollbackTransaction();
+            }
+            throw error;
+        } finally {
+            if ((Conectar.getInstancia().getJdbc().isInTransaction())) {
+                Conectar.getInstancia().getJdbc().commitTransaction();
+            }
+        }
+
+        return veiculo;
     }
 
     private IVeiculo construir(QueryResult resultado, ICliente dono, boolean fechar) {
@@ -76,8 +107,8 @@ public class PersistirVeiculo {
         return veiculo;
     }
 
-    public Map<Integer, IVeiculo> recuperarPeloDono(int idDono) {
-        Map<Integer, IVeiculo> veiculos = new HashMap();
+    public Map<Long, IVeiculo> recuperarPeloDono(int idDono) {
+        Map<Long, IVeiculo> veiculos = new HashMap();
         if ((idDono > 0)) {
             ControlarCliente controle = new ControlarCliente();
             ICliente dono = controle.recuperar(idDono);
@@ -87,8 +118,8 @@ public class PersistirVeiculo {
         return veiculos;
     }
 
-    public Map<Integer, IVeiculo> recuperarPeloDono(ICliente dono) {
-        Map<Integer, IVeiculo> veiculos = new HashMap();
+    public Map<Long, IVeiculo> recuperarPeloDono(ICliente dono) {
+        Map<Long, IVeiculo> veiculos = new HashMap();
         if ((dono != null)) {
             QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT * FROM `veiculos` WHERE ( `clienteID` = ? )", new Object[]{dono.getId()});
             while (resultados.next()) {

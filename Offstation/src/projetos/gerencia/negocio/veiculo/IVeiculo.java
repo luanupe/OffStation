@@ -9,7 +9,9 @@ public interface IVeiculo {
 
     public ICliente getDono();
 
-    public int getId();
+    public long getId();
+
+    public void setId(long id);
 
     public String getPlaca();
 

@@ -1,6 +1,7 @@
 package projetos.gerencia.apresentacao;
 
 import java.util.Map;
+import jdbchelper.JdbcException;
 import projetos.gerencia.Principal;
 import projetos.gerencia.negocio.produto.IProduto;
 import projetos.gerencia.negocio.produto.Peca;
@@ -9,22 +10,22 @@ import projetos.gerencia.persistencia.produto.PersistirProduto;
 
 public class ControlarProduto {
 
-    public boolean salvar(int tipo, int id, int estoque, double preco, String nome, String marca) {
+    public IProduto salvar(int tipo, int id, int estoque, double preco, String nome, String marca) {
         if ((tipo == 1)) {
             return this.salvar(new Peca(id, estoque, preco, nome, marca));
         }
         return this.salvar(new Servico(id, estoque, preco, nome, marca));
     }
 
-    public boolean salvar(IProduto produto) {
-        boolean salvo = false;
-        if ((PersistirProduto.getInstancia().salvar(produto))) {
-            Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' salvo com sucesso.").toString());
-            salvo = true;
-        } else if ((produto != null)) {
+    public IProduto salvar(IProduto produto) {
+        try {
+            PersistirProduto.getInstancia().salvar(produto);
+            Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' salvo com sucesso! Novo ID: ").append(produto.getId()).toString());
+        } catch (JdbcException error) {
             Principal.getInstancia().log(new StringBuilder().append("Produto '").append(produto.getNome()).append("' não pode ser salvo.").toString());
+            produto = null;
         }
-        return salvo;
+        return produto;
     }
 
     public boolean remover(IProduto produto) {
@@ -43,11 +44,11 @@ public class ControlarProduto {
         return PersistirProduto.getInstancia().recuperar(nome);
     }
 
-    public Map<Integer, IProduto> recuperarTodos(String nome) {
+    public Map<Long, IProduto> recuperarTodos(String nome) {
         return PersistirProduto.getInstancia().recuperarTodos(nome);
     }
 
-    public Map<Integer, IProduto> recuperarTodos() {
+    public Map<Long, IProduto> recuperarTodos() {
         return PersistirProduto.getInstancia().recuperarTodos();
     }
 

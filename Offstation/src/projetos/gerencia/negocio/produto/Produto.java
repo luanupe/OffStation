@@ -2,13 +2,13 @@ package projetos.gerencia.negocio.produto;
 
 public abstract class Produto implements IProduto {
 
-    private int id;
+    private long id;
     private int estoque;
     private double preco;
     private String nome;
     private String marca;
 
-    public Produto(int id, int estoque, double preco, String nome, String marca) {
+    public Produto(long id, int estoque, double preco, String nome, String marca) {
         this.setId(id);
         this.setEstoque(estoque);
         this.setPreco(preco);
@@ -17,11 +17,12 @@ public abstract class Produto implements IProduto {
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
-    private void setId(int id) {
+    @Override
+    public final void setId(long id) {
         this.id = id;
     }
 

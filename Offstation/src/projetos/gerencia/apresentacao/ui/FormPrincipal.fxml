@@ -30,7 +30,7 @@
                            </font>
                         </Label>
                         <Rectangle fx:id="retanguloNotificacao" arcHeight="5.0" arcWidth="5.0" fill="#ff2b565e" height="19.0" layoutX="2.0" layoutY="84.0" stroke="#0000003f" strokeType="INSIDE" visible="false" width="621.0" />
-                        <TextField fx:id="txtIdProduto" disable="true" layoutX="76.0" layoutY="140.0" prefHeight="25.0" prefWidth="413.0" promptText="ID do Produto" visible="false" />
+                        <TextField fx:id="txtIdProduto" disable="false" layoutX="76.0" layoutY="140.0" prefHeight="25.0" prefWidth="413.0" promptText="ID do Produto" visible="true" />
                         <Label disable="true" layoutX="11.0" layoutY="143.0" text="ID" visible="false" />
                         <Label layoutX="11.0" layoutY="179.0" text="Nome" />
                         <TextField fx:id="txtNomeProduto" layoutX="76.0" layoutY="176.0" prefHeight="25.0" prefWidth="413.0" promptText="Nome do Produto" />

@@ -8,7 +8,7 @@ import projetos.gerencia.persistencia.veiculo.PersistirOrcamento;
 public final class Veiculo implements IVeiculo {
 
     private ICliente dono;
-    private int id;
+    private long id;
     private String placa;
     private String descricao;
     private String entrada;
@@ -35,11 +35,12 @@ public final class Veiculo implements IVeiculo {
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
-    private void setId(int id) {
+    @Override
+    public void setId(long id) {
         this.id = id;
     }
 

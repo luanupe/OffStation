@@ -2,7 +2,9 @@ package projetos.gerencia.negocio.produto;
 
 public interface IProduto {
 
-    public int getId();
+    public long getId();
+
+    public void setId(long id);
 
     public int getEstoque();
 
