@@ -111,7 +111,7 @@
                         <Button layoutX="505.0" layoutY="50.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Listar" />
                         <Separator layoutY="42.0" prefHeight="0.0" prefWidth="627.0" />
                         <TextField layoutX="292.0" layoutY="14.0" prefHeight="25.0" prefWidth="193.0" promptText="Codigo do Equipamento" />
-                        <Button layoutX="504.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Buscar" />
+                        <Button layoutX="503.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Buscar" />
                         <Label layoutX="14.0" layoutY="18.0" text="Buscar" />
                         <TextField layoutX="68.0" layoutY="14.0" prefHeight="25.0" prefWidth="212.0" promptText="Nome do Equipamento" />
                         <Label layoutX="14.0" layoutY="97.0" text="ID" />
@@ -141,6 +141,30 @@
                      </children>
                   </AnchorPane>
                </content>
+            </Tab>
+            <Tab text="Finanças">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tabelaFinancas" layoutY="76.0" prefHeight="292.0" prefWidth="627.0">
+                          <columns>
+                            <TableColumn prefWidth="285.0" text="Descriçao" />
+                            <TableColumn minWidth="0.0" prefWidth="112.0" text="Quantidade" />
+                              <TableColumn minWidth="0.0" prefWidth="118.0" text="Preço" />
+                              <TableColumn minWidth="0.0" prefWidth="111.0" text="Total" />
+                          </columns>
+                        </TableView>
+                        <Label layoutX="23.0" layoutY="25.0" text="Ano" />
+                        <TextField fx:id="campoFinancasAno" layoutX="62.0" layoutY="21.0" prefHeight="25.0" prefWidth="50.0" />
+                        <Label layoutX="165.0" layoutY="25.0" text="De:" />
+                        <Label layoutX="288.0" layoutY="25.0" text="Para:" />
+                        <ComboBox fx:id="comboboxFinancasDE" layoutX="191.0" layoutY="21.0" prefHeight="25.0" prefWidth="90.0" />
+                        <ComboBox fx:id="comboboxFinancasPARA" layoutX="320.0" layoutY="21.0" prefHeight="25.0" prefWidth="115.0" />
+                        <Button fx:id="botaoFinancasRelatorio" layoutX="475.0" layoutY="21.0" mnemonicParsing="false" text="Gerar Relatório" />
+                        <Separator layoutY="59.0" prefHeight="3.0" prefWidth="627.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
             </Tab>
         </tabs>
       </TabPane>

@@ -30,10 +30,9 @@ import projetos.gerencia.negocio.produto.Peca;
 import projetos.gerencia.negocio.produto.Produto;
 import projetos.gerencia.negocio.produto.Servico;
 
-public class ControladorFormPrincipal implements Initializable{
+public class ControladorFormPrincipal implements Initializable {
 
     //**INICIO COMPONENTES PRODUTOS**
-    
     @FXML
     private Rectangle retanguloNotificacao;
     @FXML
@@ -64,152 +63,179 @@ public class ControladorFormPrincipal implements Initializable{
     private Button btnListarProdutos;
     @FXML
     private TitledPane expansorListaProdutos;
-    
+
     private ControlarProduto controlarProduto;
 
     //**FIM COMPONENTES PRODUTOS**
+    //**INICIO COMPONENTES FINANCAS
     
     @FXML
+    private TableView<Object> tabelaFinancas;
+
+    @FXML
+    private TextField campoFinancasAno;
+
+    @FXML
+    private ComboBox<String> comboboxFinancasDE;
+
+    @FXML
+    private ComboBox<String> comboboxFinancasPARA;
+
+    @FXML
+    private Button botaoFinancasRelatorio;
+    
+    //**FIM COMPONENTES FINANCAS
+
+    @FXML
     private void expandirLista(TitledPane expansorLista) {
-        if(expansorLista.getMaxHeight() == 0){
+        if (expansorLista.getMaxHeight() == 0) {
             expansorLista.setMaxHeight(326);
-        }else{
+        } else {
             expansorLista.setMaxHeight(0);
         }
     }
 
-    private void esconderNofificacao(){
+    private void esconderNofificacao() {
         this.retanguloNotificacao.setVisible(false);
         this.labelNotificacao.setVisible(false);
     }
-   
-    private void exibirNofificacao(String msg){
+
+    private void exibirNofificacao(String msg) {
         //this.retanguloNotificacao.setFill(Color.LIGHTGREEN);//;Style("-fx-text-fill: green;");
         this.retanguloNotificacao.setVisible(true);
-        
+
         this.labelNotificacao.setVisible(true);
         this.labelNotificacao.setText(msg);
-      // this.labelNotificacao.setTextFill(Color.GREEN);
-        
-        
+        // this.labelNotificacao.setTextFill(Color.GREEN);
+
     }
-    
-    
+
     //String nomeProduto, String quantidadeProduto, String precoProduto, String marcaProduto, String idProduto, int tipoProduto
-    private void adicionarProduto() throws CampoVazioException{
-          
-        if(this.txtIdProduto.getText().isEmpty()){
-            throw  new CampoVazioException("Campo 'Id' vazio.");
-        }else if(this.txtNomeProduto.getText().isEmpty()){
-            throw  new CampoVazioException("Campo 'Nome' vazio.");
-        }else if(this.txtQuantidadeProduto.getText().isEmpty()){
-            throw  new CampoVazioException("Campo 'Quantidade' vazio.");
-        }else if(this.txtPrecoProduto.getText().isEmpty()){
-            throw  new CampoVazioException("Campo 'Preço' vazio.");
-        }else if((!this.txtMarcaProduto.isDisabled()) && this.txtMarcaProduto.getText().isEmpty()){
-            throw  new CampoVazioException("Campo 'Marca' vazio.");
-        }else{
+    private void adicionarProduto() throws CampoVazioException {
+
+        if (this.txtIdProduto.getText().isEmpty()) {
+            throw new CampoVazioException("Campo 'Id' vazio.");
+        } else if (this.txtNomeProduto.getText().isEmpty()) {
+            throw new CampoVazioException("Campo 'Nome' vazio.");
+        } else if (this.txtQuantidadeProduto.getText().isEmpty()) {
+            throw new CampoVazioException("Campo 'Quantidade' vazio.");
+        } else if (this.txtPrecoProduto.getText().isEmpty()) {
+            throw new CampoVazioException("Campo 'Preço' vazio.");
+        } else if ((!this.txtMarcaProduto.isDisabled()) && this.txtMarcaProduto.getText().isEmpty()) {
+            throw new CampoVazioException("Campo 'Marca' vazio.");
+        } else {
             //ADD AQUI O PRODUTO
-            
-            try{
+
+            try {
                 double preco = Double.parseDouble(this.txtPrecoProduto.getText());
-                
-                try{
+
+                try {
                     int id = Integer.parseInt(this.txtIdProduto.getText());
-                    
+
                     //this.exibirNofificacao(String.valueOf(id));
-                    try{
+                    try {
                         int quantidade = Integer.parseInt(this.txtQuantidadeProduto.getText());
                         String marca;
                         String nome = this.txtNomeProduto.getText();
-                        Produto produto;  
-            
-                        if(this.txtMarcaProduto.isDisabled()){
+                        Produto produto;
+
+                        if (this.txtMarcaProduto.isDisabled()) {
                             marca = "OffStation";
                             this.controlarProduto.salvar(new Servico(0, quantidade, preco, nome, marca));
-                        }else{
+                        } else {
                             marca = this.txtMarcaProduto.getText();
                             int as = id;
                             this.controlarProduto.salvar(new Peca(0, quantidade, preco, nome, marca));
-                            
+
                         }
-                        
+
                         //Produto a = new Peca(0, 0, 10.0, "xdv", "asdad");
                         //salvarProduto(a);
-                        
-
-                    }catch(NumberFormatException nfex){
+                    } catch (NumberFormatException nfex) {
                         this.exibirNofificacao("O campo 'preço' deve possuir um número no formato 00.00");
                     }
-                    
-                }catch(NumberFormatException nfex){
+
+                } catch (NumberFormatException nfex) {
                     this.exibirNofificacao("O campo 'id' deve possuir um número");
                 }
 
-            }catch(NumberFormatException nfex){
+            } catch (NumberFormatException nfex) {
                 this.exibirNofificacao("O campo 'preço' deve possuir um número no formato 00.00");
             }
-            
+
         }
-        
-        
-        
+
     }
-    
-    private void preencherTabela(TableView<List<Produto>> tabela, List<Produto> listaProdutos){
-    
-        
-        
+
+    private void preencherTabela(TableView<List<Produto>> tabela, List<Produto> listaProdutos) {
+
     }
-    
-    private void bloquearComponentesProduto(boolean estado){
-    
+
+    private void bloquearComponentesProduto(boolean estado) {
+
         this.txtIdProduto.setDisable(estado);
         this.txtNomeProduto.setDisable(estado);
         this.txtQuantidadeProduto.setDisable(estado);
         this.txtPrecoProduto.setDisable(estado);
-        
+
     }
-    
-    private void salvarProduto(Produto produto){
+
+    private void salvarProduto(Produto produto) {
         new ControlarProduto().salvar(produto);
     }
     
+    @FXML
+    private void gerarRelatorio(){
+        int ano;
+        
+        try {
+            ano = Integer.parseInt(campoFinancasAno.getText());
+        } catch (Exception e) {
+            exibirNofificacao("O campo 'Ano' deve conter apenas números");
+        }
+        
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    
+        
         this.cbxTipoProduto.setItems(FXCollections.observableList(Arrays.asList("Produto", "Serviço")));
         this.cbxTipoProduto.getSelectionModel().select(0);
+
+        List<String> meses = Arrays.asList("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro");
         
-     this.controlarProduto = new ControlarProduto();
-     
-     
+        this.comboboxFinancasDE.setItems(FXCollections.observableList(meses));
+        this.comboboxFinancasDE.getSelectionModel().select(0);
         
+        this.comboboxFinancasPARA.setItems(FXCollections.observableList(meses));
+        this.comboboxFinancasPARA.getSelectionModel().select(0);
+        
+        this.controlarProduto = new ControlarProduto();
+
         this.labelNotificacao.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("./icone_info.png"))));
         this.expansorListaProdutos.setOnMouseClicked((MouseEvent event) -> {
             expandirLista(this.expansorListaProdutos);
         });
-        
+
         this.cbxTipoProduto.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            
+
             bloquearComponentesProduto(false);
-            
-            if(newValue.equals("Produto")){
+
+            if (newValue.equals("Produto")) {
                 txtMarcaProduto.setDisable(false);
-            }else{
+            } else {
                 txtMarcaProduto.setDisable(true);
             }
-        
-            
+
         });
-        
+
         this.btnAddProdutos.setOnAction((ActionEvent event) -> {
             try {
-               this.adicionarProduto();
+                this.adicionarProduto();
             } catch (CampoVazioException cvex) {
-               this.exibirNofificacao(cvex.getMessage());
+                this.exibirNofificacao(cvex.getMessage());
             }
         });
-        
+
     }
 }
