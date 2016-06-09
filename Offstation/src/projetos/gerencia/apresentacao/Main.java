@@ -12,9 +12,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("./ui/FormLogin.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("ui/FormLogin.fxml"));
         Scene scene = new Scene(root);
-
+            
         stage.setScene(scene);
         stage.setTitle("LOGIN");
 
@@ -22,6 +22,7 @@ public class Main extends Application {
         stage.setMaxHeight(315);
         stage.setResizable(false);
         stage.setMaximized(false);
+        //Icone da aplicação
         stage.getIcons().add(new Image(getClass().getResourceAsStream("ui/icone.png")));
 
         stage.show();
