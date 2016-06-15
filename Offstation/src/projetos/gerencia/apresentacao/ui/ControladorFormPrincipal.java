@@ -338,8 +338,8 @@ public class ControladorFormPrincipal implements Initializable {
             totalInvest += financa.getTotal();
         }
         
-        this.lblFinancasInvestimento.setText("Investimento (R$): " + investimento);
-        this.lblFinancasTotal.setText("Total (R$): " + totalInvest);
+        this.lblFinancasInvestimento.setText("Investimento (R$): " + totalInvest);
+        //this.lblFinancasTotal.setText("Total (R$): " + totalInvest);
         
         tabelaFinancas.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("descricao"));
         tabelaFinancas.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("quantidade"));
