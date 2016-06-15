@@ -46,7 +46,6 @@ public class PersistirOrcamento {
     public void adicionarProduto(IOrcamento orcamento) throws ComprarException {
         if ((this.getVeiculo() != null)) {
             if ((this.getVeiculo().getId() > 0)) {
-                Conectar.getInstancia().getJdbc().beginTransaction();
                 String sql = "INSERT INTO `orcamento` ( `id`, `veiculoID`, `pecaID`, `quantidade`, `data` ) VALUES ( NULL, ?, ?, ?, NOW() )";
                 Object[] params = new Object[]{this.getVeiculo().getId(), orcamento.getProduto().getId(), orcamento.getQuantidade()};
                 Principal.getInstancia().gerenciarTransacao(sql, params);
@@ -54,7 +53,7 @@ public class PersistirOrcamento {
                 Principal.getInstancia().log("Veiculo ainda não está salvo no banco de dados.");
             }
         } else {
-            Principal.getInstancia().log("Nao é possível adicionar um produto num objeto nulo.");
+            Principal.getInstancia().log("Nao é possível adicionar um produto em um objeto nulo.");
         }
     }
 
