@@ -3,6 +3,7 @@ package projetos.gerencia.apresentacao.ui;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -207,8 +208,26 @@ public class ControladorFormPrincipal implements Initializable {
     @FXML
     private void listarProdutos(){
         Map<Long, IProduto> produtos = this.controlarProduto.recuperarTodos();
-        
+      
         List<Produto> prods = new ArrayList<>();
+        
+        for (Map.Entry<Long, IProduto> prod : produtos.entrySet()) {
+            long id = prod.getValue().getId();
+            String nome = prod.getValue().getNome();
+            String marca = prod.getValue().getMarca();
+            int qtd =  prod.getValue().getEstoque();
+            double preco = prod.getValue().getPreco();
+            
+            if(marca.isEmpty()){
+                marca = "Offstation";
+                qtd = 0;
+            }
+            
+            prods.add(new Peca(id, qtd, preco, nome, marca));
+            
+        }
+        
+        /*
         
         produtos.entrySet().stream().map((entry) -> entry.getValue()).forEach((prod) -> {
             long id = prod.getId();
@@ -219,11 +238,12 @@ public class ControladorFormPrincipal implements Initializable {
             
             if(marca.isEmpty()){
                 marca = "Offstation";
+                qtd = 0;
             }
             
             prods.add(new Peca(id, qtd, preco, nome, marca));
         });
-        
+        */
         preencherTabelaProdutos(prods);
     
     }
