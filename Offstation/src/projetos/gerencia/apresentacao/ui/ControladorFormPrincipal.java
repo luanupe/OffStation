@@ -271,36 +271,39 @@ public class ControladorFormPrincipal implements Initializable {
         
         IProduto prod  = this.controlarProduto.recuperar(nome);
         
-        long id = prod.getId();
-        String nomeP = prod.getNome();
-        String marca = prod.getMarca();
-        int qtd =  prod.getEstoque();
-        double preco = prod.getPreco();
+        if(prod != null){
+            long id = prod.getId();
+            String nomeP = prod.getNome();
+            String marca = prod.getMarca();
+            int qtd =  prod.getEstoque();
+            double preco = prod.getPreco();
 
-        if(marca== null || marca.isEmpty()){
-            marca = "Offstation";
+            if(marca== null || marca.isEmpty()){
+                marca = "Offstation";
+            }
+
+            preencherTabelaProdutos(Arrays.asList(new Peca(id, qtd, preco, nomeP, marca)));
         }
-
-        preencherTabelaProdutos(Arrays.asList(new Peca(id, qtd, preco, nomeP, marca)));
-        
     }
     
     private void procurarProdutoId(int id){
         
         IProduto prod  = this.controlarProduto.recuperar(id);
         
-        long idP = prod.getId();
-        String nomeP = prod.getNome();
-        String marca = prod.getMarca();
-        int qtd =  prod.getEstoque();
-        double preco = prod.getPreco();
+        if(prod != null){
 
-        if(marca== null || marca.isEmpty()){
-            marca = "Offstation";
+            long idP = prod.getId();
+            String nomeP = prod.getNome();
+            String marca = prod.getMarca();
+            int qtd =  prod.getEstoque();
+            double preco = prod.getPreco();
+
+            if(marca== null || marca.isEmpty()){
+                marca = "Offstation";
+            }
+
+            preencherTabelaProdutos(Arrays.asList(new Peca(idP, qtd, preco, nomeP, marca)));
         }
-
-        preencherTabelaProdutos(Arrays.asList(new Peca(idP, qtd, preco, nomeP, marca)));
-        
     }
     
     @FXML
