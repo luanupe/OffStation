@@ -81,6 +81,12 @@ public class ControladorFormPrincipal implements Initializable {
     //**INICIO COMPONENTES FINANCAS
     
     @FXML
+    private Rectangle retanguloNotificacaoFinancas;
+    
+    @FXML
+    private Label labelNotificacaoFinancas;
+    
+    @FXML
     private TableView<Financa> tabelaFinancas;
 
     @FXML
@@ -145,6 +151,20 @@ public class ControladorFormPrincipal implements Initializable {
         this.retanguloNotificacao.setFill(Color.RED);//;Style("-fx-text-fill: green;");
     }
 
+    
+    private void exibirNofificacaoErroFinancas(String msg) {
+        //this.retanguloNotificacao.setFill(Color.GREENYELLOW);//;Style("-fx-text-fill: green;");
+        this.retanguloNotificacaoFinancas.setVisible(true);
+
+        //this.retanguloNotificacao.setFill(new Color(1, 1, 1, 1));
+        
+        this.labelNotificacaoFinancas.setVisible(true);
+        this.labelNotificacaoFinancas.setText(msg);
+        //this.labelNotificacao.setTextFill(new Color(1, 1, 1, 1));
+         
+        this.retanguloNotificacaoFinancas.setFill(Color.RED);//;Style("-fx-text-fill: green;");
+    }
+    
     //String nomeProduto, String quantidadeProduto, String precoProduto, String marcaProduto, String idProduto, int tipoProduto
     private void adicionarProduto() throws CampoVazioException {
 
@@ -218,7 +238,7 @@ public class ControladorFormPrincipal implements Initializable {
             int qtd =  prod.getValue().getEstoque();
             double preco = prod.getValue().getPreco();
             
-            if(marca.isEmpty()){
+            if(marca == null || marca.isEmpty()){
                 marca = "Offstation";
                 qtd = 0;
             }
@@ -227,23 +247,6 @@ public class ControladorFormPrincipal implements Initializable {
             
         }
         
-        /*
-        
-        produtos.entrySet().stream().map((entry) -> entry.getValue()).forEach((prod) -> {
-            long id = prod.getId();
-            String nome = prod.getNome();
-            String marca = prod.getMarca();
-            int qtd =  prod.getEstoque();
-            double preco = prod.getPreco();
-            
-            if(marca.isEmpty()){
-                marca = "Offstation";
-                qtd = 0;
-            }
-            
-            prods.add(new Peca(id, qtd, preco, nome, marca));
-        });
-        */
         preencherTabelaProdutos(prods);
     
     }
@@ -274,7 +277,7 @@ public class ControladorFormPrincipal implements Initializable {
         int qtd =  prod.getEstoque();
         double preco = prod.getPreco();
 
-        if(marca.isEmpty()){
+        if(marca== null || marca.isEmpty()){
             marca = "Offstation";
         }
 
@@ -292,7 +295,7 @@ public class ControladorFormPrincipal implements Initializable {
         int qtd =  prod.getEstoque();
         double preco = prod.getPreco();
 
-        if(marca.isEmpty()){
+        if(marca== null || marca.isEmpty()){
             marca = "Offstation";
         }
 
@@ -359,7 +362,7 @@ public class ControladorFormPrincipal implements Initializable {
             preencherTabelaFinancas(this.controlarEmpresa.getFinancas(ano, mesDe, mesPara));
         
         } catch (Exception e) {
-            exibirNofificacaoErro("O campo 'Ano' deve conter apenas números");
+            exibirNofificacaoErroFinancas("O campo 'Ano' deve conter apenas números");
         }
         
     }
