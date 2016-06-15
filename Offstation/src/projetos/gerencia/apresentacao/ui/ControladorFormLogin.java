@@ -99,6 +99,9 @@ public class ControladorFormLogin implements Initializable {
         formLogin.close();
 
         try {
+            
+            System.out.println(" arquivo " + getClass().getResource("FormPrincipal.fxml"));
+            
             Parent root = FXMLLoader.load(getClass().getResource("FormPrincipal.fxml"));
 
             Scene scene = new Scene(root);
@@ -112,7 +115,7 @@ public class ControladorFormLogin implements Initializable {
             
             stage.show();
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ControladorFormLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
 

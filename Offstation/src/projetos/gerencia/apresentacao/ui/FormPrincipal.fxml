@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.*?>
@@ -19,17 +20,20 @@
                         <ComboBox fx:id="cbxTipoProduto" layoutX="75.0" layoutY="106.0" prefWidth="150.0" />
                         <TextField fx:id="txtBuscaNomeProduto" layoutX="68.0" layoutY="14.0" prefHeight="25.0" prefWidth="212.0" promptText="Nome do Produto" />
                         <Label layoutX="14.0" layoutY="18.0" text="Buscar" />
-                        <Button fx:id="btnBuscarProdutos" layoutX="504.0" layoutY="14.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Buscar" />
+                        <Button fx:id="btnBuscarProdutos" layoutX="504.0" layoutY="14.0" mnemonicParsing="false" onAction="#procurarProduto" prefHeight="25.0" prefWidth="103.0" text="Buscar" />
                         <TextField fx:id="txtBuscaCodProduto" layoutX="292.0" layoutY="14.0" prefHeight="25.0" prefWidth="193.0" promptText="Codigo do Produto" />
                         <Separator layoutY="42.0" prefHeight="0.0" prefWidth="627.0" />
-                        <Button fx:id="btnListarProdutos" layoutX="505.0" layoutY="50.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="103.0" text="Listar" />
+                        <Button fx:id="btnListarProdutos" layoutX="505.0" layoutY="50.0" mnemonicParsing="false" onAction="#listarProdutos" prefHeight="25.0" prefWidth="103.0" text="Listar" />
                         <Separator layoutY="82.0" prefHeight="3.0" prefWidth="627.0" />
                         <Label fx:id="labelNotificacao" layoutX="5.0" layoutY="87.0" prefHeight="8.0" prefWidth="618.0" text="Label" visible="false">
                            <font>
                               <Font name="Calibri Light Italic" size="13.0" />
                            </font>
                         </Label>
-                        <Rectangle fx:id="retanguloNotificacao" arcHeight="5.0" arcWidth="5.0" fill="#ff2b565e" height="19.0" layoutX="2.0" layoutY="84.0" stroke="#0000003f" strokeType="INSIDE" visible="false" width="621.0" />
+                        <Rectangle fx:id="retanguloNotificacao" arcHeight="5.0" arcWidth="5.0" fill="#ff2b5900" height="19.0" layoutX="2.0" layoutY="84.0" opacity="0.41" stroke="#0000003f" strokeType="INSIDE" visible="false" width="621.0">
+                           <effect>
+                              <MotionBlur />
+                           </effect></Rectangle>
                         <Label disable="true" layoutX="11.0" layoutY="143.0" text="ID" visible="false" />
                         <Label layoutX="11.0" layoutY="149.0" text="Nome" />
                         <TextField fx:id="txtNomeProduto" layoutX="76.0" layoutY="146.0" prefHeight="25.0" prefWidth="413.0" promptText="Nome do Produto" />
@@ -40,16 +44,17 @@
                         <TextField fx:id="txtQuantidadeProduto" layoutX="75.0" layoutY="181.0" prefHeight="25.0" prefWidth="413.0" promptText="Quantidade do Produto" />
                         <Label layoutX="10.0" layoutY="184.0" text="Quantidade" />
                         <Button fx:id="btnAddProdutos" layoutX="292.0" layoutY="290.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="194.0" text="Adicionar novo Produto" />
-                        <TitledPane fx:id="expansorListaProdutos" animated="false" expanded="false" layoutX="1.0" layoutY="50.0" maxHeight="0.0" prefHeight="327.0" prefWidth="491.0" text="Lista de Produtos">
+                        <TitledPane fx:id="expansorListaProdutos" animated="false" expanded="false" layoutX="1.0" layoutY="50.0" maxHeight="325.0" prefHeight="325.0" prefWidth="491.0" text="Lista de Produtos">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
                                     <TableView fx:id="tabelaListaProdutos" prefHeight="300.0" prefWidth="488.0">
                                       <columns>
-                                        <TableColumn prefWidth="74.0" text="Codigo" />
-                                        <TableColumn minWidth="0.0" prefWidth="249.0" text="Nome" />
-                                          <TableColumn minWidth="0.0" prefWidth="66.0" text="Preço" />
+                                          <TableColumn prefWidth="75.0" text="ID" />
+                                        <TableColumn minWidth="0.0" prefWidth="156.0" text="Nome" />
+                                        <TableColumn prefWidth="93.0" text="Marca" />
                                           <TableColumn prefWidth="92.0" text="Quantidade" />
+                                          <TableColumn minWidth="0.0" prefWidth="69.0" text="Preço" />
                                       </columns>
                                     </TableView>
                                  </children>
@@ -147,7 +152,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tabelaFinancas" layoutY="76.0" prefHeight="292.0" prefWidth="627.0">
+                        <TableView fx:id="tabelaFinancas" layoutY="98.0" prefHeight="270.0" prefWidth="627.0">
                           <columns>
                             <TableColumn prefWidth="285.0" text="Descriçao" />
                             <TableColumn minWidth="0.0" prefWidth="112.0" text="Quantidade" />
@@ -161,8 +166,18 @@
                         <Label layoutX="288.0" layoutY="25.0" text="Para:" />
                         <ComboBox fx:id="comboboxFinancasDe" layoutX="191.0" layoutY="21.0" prefHeight="25.0" prefWidth="90.0" />
                         <ComboBox fx:id="comboboxFinancasPara" layoutX="320.0" layoutY="21.0" prefHeight="25.0" prefWidth="115.0" />
-                        <Button fx:id="botaoFinancasRelatorio" layoutX="475.0" layoutY="21.0" mnemonicParsing="false" text="Gerar Relatório" />
+                        <Button fx:id="botaoFinancasRelatorio" layoutX="475.0" layoutY="21.0" mnemonicParsing="false" onAction="#gerarRelatorio" text="Gerar Relatório" />
                         <Separator layoutY="59.0" prefHeight="3.0" prefWidth="627.0" />
+                        <Label fx:id="lblFinancasInvestimento" layoutX="34.0" layoutY="66.0" text="Investimento (R$)">
+                           <font>
+                              <Font name="Book Antiqua" size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblFinancasTotal" layoutX="314.0" layoutY="66.0" text="Total (R$)">
+                           <font>
+                              <Font name="Book Antiqua" size="18.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
               </content>

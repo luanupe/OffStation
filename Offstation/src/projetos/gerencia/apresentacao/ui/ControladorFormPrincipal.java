@@ -29,15 +29,21 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import projetos.gerencia.apresentacao.ControlarEmpresa;
 import projetos.gerencia.apresentacao.ControlarProduto;
 import projetos.gerencia.apresentacao.ui.excessoes.CampoVazioException;
 import projetos.gerencia.negocio.produto.IProduto;
 import projetos.gerencia.negocio.produto.Peca;
 import projetos.gerencia.negocio.produto.Produto;
 import projetos.gerencia.negocio.produto.Servico;
+import projetos.gerencia.persistencia.empresa.Financa;
 
 public class ControladorFormPrincipal implements Initializable {
 
+    
+    private ControlarProduto controlarProduto;
+    private ControlarEmpresa controlarEmpresa;
+    
     //**INICIO COMPONENTES PRODUTOS**
     @FXML
     private Rectangle retanguloNotificacao;
@@ -70,13 +76,11 @@ public class ControladorFormPrincipal implements Initializable {
     @FXML
     private TitledPane expansorListaProdutos;
 
-    private ControlarProduto controlarProduto;
-
     //**FIM COMPONENTES PRODUTOS**
     //**INICIO COMPONENTES FINANCAS
     
     @FXML
-    private TableView<Financas> tabelaFinancas;
+    private TableView<Financa> tabelaFinancas;
 
     @FXML
     private TextField txtFinancasAno;
@@ -200,12 +204,6 @@ public class ControladorFormPrincipal implements Initializable {
         this.txtPrecoProduto.setDisable(estado);
 
     }
-/*
-    private void salvarProduto(Produto produto) {
-        new ControlarProduto().salvar(produto);
-    }
- */  
- 
     @FXML
     private void listarProdutos(){
         Map<Long, IProduto> produtos = this.controlarProduto.recuperarTodos();
@@ -304,29 +302,14 @@ public class ControladorFormPrincipal implements Initializable {
     }
     
    @FXML 
-    private void preencherTabelaFinancas() {
-        
-        Map<Long, IProduto> produtos = this.controlarProduto.recuperarTodos();
-        
-        List<Financas> financas = new ArrayList<>();
+    private void preencherTabelaFinancas(List<Financa> financas) {
         
         double investimento = 0.0;
         double totalInvest = 0.0;
         
-        for (Map.Entry<Long, IProduto> entry : produtos.entrySet()) {
-            IProduto prod = entry.getValue();
-            
-            String nome = prod.getNome();
-            int qtd =  prod.getEstoque();
-            double preco = prod.getPreco();
-            double total = qtd * preco;
-            
-            investimento += preco;
-            totalInvest += total;
-            
-            Financas fin = new Financas(nome, qtd, preco, total);
-            financas.add(fin);
-            
+        for (Financa financa : financas) {
+            investimento += financa.getPreco();
+            totalInvest += financa.getTotal();
         }
         
         this.lblFinancasInvestimento.setText("Investimento (R$): " + investimento);
@@ -341,15 +324,20 @@ public class ControladorFormPrincipal implements Initializable {
         
     }
 
-    
     @FXML
     private void gerarRelatorio(){
         int ano;
+        int mesDe;
+        int mesPara;
         
-        preencherTabelaFinancas();
+        mesDe = comboboxFinancasDe.getSelectionModel().getSelectedIndex();
+        mesPara = comboboxFinancasPara.getSelectionModel().getSelectedIndex();
         
         try {
-            //ano = Integer.parseInt(txtFinancasAno.getText());
+            ano = Integer.parseInt(txtFinancasAno.getText());
+            
+            preencherTabelaFinancas(this.controlarEmpresa.getFinancas(ano, mesDe, mesPara));
+        
         } catch (Exception e) {
             exibirNofificacaoErro("O campo 'Ano' deve conter apenas números");
         }
@@ -371,6 +359,7 @@ public class ControladorFormPrincipal implements Initializable {
         this.comboboxFinancasPara.getSelectionModel().select(0);
         
         this.controlarProduto = new ControlarProduto();
+        this.controlarEmpresa = new ControlarEmpresa();
 
         this.labelNotificacao.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("./icone_info.png"))));
         this.expansorListaProdutos.setOnMouseClicked((MouseEvent event) -> {
