@@ -41,7 +41,7 @@ public class PersistirEmpresa {
 
     public List<Financa> getOrcamentos(int ano, int de, int para) {
         List<Financa> orcamentos = new ArrayList();
-        QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT SUM(`quantidade`) AS `Total`, `pecaID` FROM `orcamento` `O` WHERE ( `O`.`data` BETWEEN ? AND ? ) GROUP BY `pecaID`", new Object[]{(ano + "-" + de + "-01"), (ano + "-" + de + "-31")});
+        QueryResult resultados = Conectar.getInstancia().getJdbc().query("SELECT SUM(`quantidade`) AS `Total`, `pecaID` FROM `orcamento` `O` WHERE ( `O`.`data` BETWEEN ? AND ? ) GROUP BY `pecaID`", new Object[]{(ano + "-" + de + "-01"), (ano + "-" + para + "-31")});
 
         while (resultados.next()) {
             this.construirFinanca(resultados, orcamentos);
