@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -75,7 +76,7 @@ public class ControladorFormPrincipal implements Initializable {
     //**INICIO COMPONENTES FINANCAS
     
     @FXML
-    private TableView<Financa> tabelaFinancas;
+    private TableView<Financas> tabelaFinancas;
 
     @FXML
     private TextField txtFinancasAno;
@@ -89,15 +90,23 @@ public class ControladorFormPrincipal implements Initializable {
     @FXML
     private Button botaoFinancasRelatorio;
     
+    @FXML
+    private Label lblFinancasInvestimento;
+        
+    @FXML
+    private Label lblFinancasTotal;
+    
     //**FIM COMPONENTES FINANCAS
 
     @FXML
     private void expandirLista(TitledPane expansorLista) {
-        if (expansorLista.getMaxHeight() == 0) {
+    /*    if (expansorLista.getMaxHeight() == 0) {
             expansorLista.setMaxHeight(326);
+            this.expansorListaProdutos.setExpanded(true);
         } else {
-            expansorLista.setMaxHeight(0);
-        }
+            //expansorLista.setMaxHeight(0);
+            this.expansorListaProdutos.setExpanded(false);
+        }*/
     }
 
     private void esconderNofificacao() {
@@ -197,41 +206,138 @@ public class ControladorFormPrincipal implements Initializable {
     }
  */  
  
-    private void preencherTabelaFinancas() {
-        List fin = Arrays.asList(
-                new Financa("TESTE01", 1, 10, 20),
-                new Financa("TESTE02", 1, 10, 20),
-                new Financa("TESTE03", 1, 10, 20),
-                new Financa("TESTE04", 1, 10, 20),
-                new Financa("TESTE05", 1, 10, 20),
-                new Financa("TESTE06", 1, 10, 20),
-                new Financa("TESTE07", 1, 10, 20),
-                new Financa("TESTE08", 1, 10, 20));
-
+    @FXML
+    private void listarProdutos(){
+        Map<Long, IProduto> produtos = this.controlarProduto.recuperarTodos();
         
-        TableColumn colunaDesc = new TableColumn<>("Descricao");
-        TableColumn colunaQtd = new TableColumn<>("Quantidade");
-        TableColumn colunaPreco = new TableColumn<>("Preco");
-        TableColumn colunaTotal = new TableColumn<>("Total");
+        List<Produto> prods = new ArrayList<>();
+        
+        produtos.entrySet().stream().map((entry) -> entry.getValue()).forEach((prod) -> {
+            long id = prod.getId();
+            String nome = prod.getNome();
+            String marca = prod.getMarca();
+            int qtd =  prod.getEstoque();
+            double preco = prod.getPreco();
+            
+            if(marca.isEmpty()){
+                marca = "Offstation";
+            }
+            
+            prods.add(new Peca(id, qtd, preco, nome, marca));
+        });
+        
+        preencherTabelaProdutos(prods);
+    
+    }
+    
+    private void preencherTabelaProdutos(List<Produto> prods) {
+        
+        tabelaListaProdutos.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("id"));
+        tabelaListaProdutos.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("nome"));
+        tabelaListaProdutos.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("marca"));
+        tabelaListaProdutos.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("estoque"));
+        tabelaListaProdutos.getColumns().get(4).setCellValueFactory(new PropertyValueFactory<>("preco"));
+        
+        tabelaListaProdutos.setItems(FXCollections.observableArrayList(prods));
+        
+        this.expansorListaProdutos.setExpanded(true);
+        //expandirLista(expansorListaProdutos);
+        //this.expansorListaProdutos.animatedProperty();
+        
+    }
 
-        /*
-        TableColumn colunaDesc = tabelaFinancas.getColumns().get(0);
-        TableColumn colunaQtd =  tabelaFinancas.getColumns().get(1);
-        TableColumn colunaPreco =  tabelaFinancas.getColumns().get(2);
-        TableColumn colunaTotal =  tabelaFinancas.getColumns().get(3);
-  */      
+    private void procurarProdutoNome(String nome){
+        
+        IProduto prod  = this.controlarProduto.recuperar(nome);
+        
+        long id = prod.getId();
+        String nomeP = prod.getNome();
+        String marca = prod.getMarca();
+        int qtd =  prod.getEstoque();
+        double preco = prod.getPreco();
+
+        if(marca.isEmpty()){
+            marca = "Offstation";
+        }
+
+        preencherTabelaProdutos(Arrays.asList(new Peca(id, qtd, preco, nomeP, marca)));
+        
+    }
+    
+    private void procurarProdutoId(int id){
+        
+        IProduto prod  = this.controlarProduto.recuperar(id);
+        
+        long idP = prod.getId();
+        String nomeP = prod.getNome();
+        String marca = prod.getMarca();
+        int qtd =  prod.getEstoque();
+        double preco = prod.getPreco();
+
+        if(marca.isEmpty()){
+            marca = "Offstation";
+        }
+
+        preencherTabelaProdutos(Arrays.asList(new Peca(idP, qtd, preco, nomeP, marca)));
+        
+    }
+    
+    @FXML
+    private void procurarProduto(){
+        String nome = this.txtBuscaNomeProduto.getText();
+        
+        if(! nome.isEmpty()){
+            procurarProdutoNome(nome);
+        }else{
+            
+            int id;
+            try{
+        
+                id = Integer.parseInt(this.txtBuscaCodProduto.getText());
+                procurarProdutoId(id);
+                
+            }catch(NumberFormatException nfex){
+                this.exibirNofificacaoErro("Insira o ID do produto em formato numérico!");
+            }
+            
+        }
+    }
+    
+   @FXML 
+    private void preencherTabelaFinancas() {
+        
+        Map<Long, IProduto> produtos = this.controlarProduto.recuperarTodos();
+        
+        List<Financas> financas = new ArrayList<>();
+        
+        double investimento = 0.0;
+        double totalInvest = 0.0;
+        
+        for (Map.Entry<Long, IProduto> entry : produtos.entrySet()) {
+            IProduto prod = entry.getValue();
+            
+            String nome = prod.getNome();
+            int qtd =  prod.getEstoque();
+            double preco = prod.getPreco();
+            double total = qtd * preco;
+            
+            investimento += preco;
+            totalInvest += total;
+            
+            Financas fin = new Financas(nome, qtd, preco, total);
+            financas.add(fin);
+            
+        }
+        
+        this.lblFinancasInvestimento.setText("Investimento (R$): " + investimento);
+        this.lblFinancasTotal.setText("Total (R$): " + totalInvest);
+        
         tabelaFinancas.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("descricao"));
         tabelaFinancas.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("quantidade"));
         tabelaFinancas.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("preco"));
         tabelaFinancas.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("total"));
-  /*
-        colunaDesc.setCellValueFactory(new PropertyValueFactory<>("descricao"));
-        colunaQtd.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-        colunaPreco.setCellValueFactory(new PropertyValueFactory<>("preco"));
-        colunaTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-    */  
-        tabelaFinancas.setItems(FXCollections.observableArrayList(fin));
-        //tabelaFinancas.getColumns().addAll(colunaDesc, colunaQtd, colunaPreco, colunaTotal);
+  
+        tabelaFinancas.setItems(FXCollections.observableArrayList(financas));
         
     }
 
