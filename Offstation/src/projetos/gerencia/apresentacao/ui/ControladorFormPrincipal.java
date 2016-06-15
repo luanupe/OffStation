@@ -15,13 +15,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import projetos.gerencia.apresentacao.ControlarProduto;
 import projetos.gerencia.apresentacao.ui.excessoes.CampoVazioException;
@@ -44,7 +49,7 @@ public class ControladorFormPrincipal implements Initializable {
     @FXML
     private Button btnAddProdutos;
     @FXML
-    private TableView<List<Produto>> tabelaListaProdutos;
+    private TableView<Produto> tabelaListaProdutos;
     @FXML
     private Button btnBuscarProdutos;
     @FXML
@@ -55,8 +60,8 @@ public class ControladorFormPrincipal implements Initializable {
     private TextField txtMarcaProduto;
     @FXML
     private TextField txtBuscaCodProduto;
-    @FXML
-    private TextField txtIdProduto;
+    //@FXML
+    //private TextField txtIdProduto;
     @FXML
     private ComboBox<String> cbxTipoProduto;
     @FXML
@@ -70,16 +75,16 @@ public class ControladorFormPrincipal implements Initializable {
     //**INICIO COMPONENTES FINANCAS
     
     @FXML
-    private TableView<Object> tabelaFinancas;
+    private TableView<Financa> tabelaFinancas;
 
     @FXML
-    private TextField campoFinancasAno;
+    private TextField txtFinancasAno;
 
     @FXML
-    private ComboBox<String> comboboxFinancasDE;
+    private ComboBox<String> comboboxFinancasDe;
 
     @FXML
-    private ComboBox<String> comboboxFinancasPARA;
+    private ComboBox<String> comboboxFinancasPara;
 
     @FXML
     private Button botaoFinancasRelatorio;
@@ -100,22 +105,40 @@ public class ControladorFormPrincipal implements Initializable {
         this.labelNotificacao.setVisible(false);
     }
 
-    private void exibirNofificacao(String msg) {
-        //this.retanguloNotificacao.setFill(Color.LIGHTGREEN);//;Style("-fx-text-fill: green;");
+    private void exibirNofificacaoSucesso(String msg) {
+       //this.retanguloNotificacao.setFill(Color.GREENYELLOW);//;Style("-fx-text-fill: green;");
         this.retanguloNotificacao.setVisible(true);
 
+        //this.retanguloNotificacao.setFill(new Color(1, 1, 1, 1));
+        
         this.labelNotificacao.setVisible(true);
         this.labelNotificacao.setText(msg);
-        // this.labelNotificacao.setTextFill(Color.GREEN);
+        //this.labelNotificacao.setTextFill(new Color(1, 1, 1, 1));
+         
+        this.retanguloNotificacao.setFill(Color.GREEN);//;Style("-fx-text-fill: green;");    
+    }
+    
+    private void exibirNofificacaoErro(String msg) {
+        //this.retanguloNotificacao.setFill(Color.GREENYELLOW);//;Style("-fx-text-fill: green;");
+        this.retanguloNotificacao.setVisible(true);
 
+        //this.retanguloNotificacao.setFill(new Color(1, 1, 1, 1));
+        
+        this.labelNotificacao.setVisible(true);
+        this.labelNotificacao.setText(msg);
+        //this.labelNotificacao.setTextFill(new Color(1, 1, 1, 1));
+         
+        this.retanguloNotificacao.setFill(Color.RED);//;Style("-fx-text-fill: green;");
     }
 
     //String nomeProduto, String quantidadeProduto, String precoProduto, String marcaProduto, String idProduto, int tipoProduto
     private void adicionarProduto() throws CampoVazioException {
 
-        if (this.txtIdProduto.getText().isEmpty()) {
-            throw new CampoVazioException("Campo 'Id' vazio.");
-        } else if (this.txtNomeProduto.getText().isEmpty()) {
+        /*if (this.txtIdProduto.getText().isEmpty()) {
+                    throw new CampoVazioException("Campo 'Id' vazio.");
+        } else*/
+
+        if (this.txtNomeProduto.getText().isEmpty()) {
             throw new CampoVazioException("Campo 'Nome' vazio.");
         } else if (this.txtQuantidadeProduto.getText().isEmpty()) {
             throw new CampoVazioException("Campo 'Quantidade' vazio.");
@@ -128,9 +151,7 @@ public class ControladorFormPrincipal implements Initializable {
 
             try {
                 double preco = Double.parseDouble(this.txtPrecoProduto.getText());
-
-                try {
-                    int id = Integer.parseInt(this.txtIdProduto.getText());
+                    //int id = Integer.parseInt(this.txtIdProduto.getText());
 
                     //this.exibirNofificacao(String.valueOf(id));
                     try {
@@ -144,54 +165,87 @@ public class ControladorFormPrincipal implements Initializable {
                             this.controlarProduto.salvar(new Servico(0, quantidade, preco, nome, marca));
                         } else {
                             marca = this.txtMarcaProduto.getText();
-                            int as = id;
                             this.controlarProduto.salvar(new Peca(0, quantidade, preco, nome, marca));
-
                         }
-
+                        
+                        this.exibirNofificacaoSucesso("Produto adicionado com sucesso!");
+                        
                         //Produto a = new Peca(0, 0, 10.0, "xdv", "asdad");
                         //salvarProduto(a);
                     } catch (NumberFormatException nfex) {
-                        this.exibirNofificacao("O campo 'preço' deve possuir um número no formato 00.00");
+                        this.exibirNofificacaoErro("O campo 'preço' deve possuir um número no formato 00.00");
                     }
-
-                } catch (NumberFormatException nfex) {
-                    this.exibirNofificacao("O campo 'id' deve possuir um número");
-                }
-
             } catch (NumberFormatException nfex) {
-                this.exibirNofificacao("O campo 'preço' deve possuir um número no formato 00.00");
+                this.exibirNofificacaoErro("O campo 'preço' deve possuir um número no formato 00.00");
             }
 
         }
 
     }
 
-    private void preencherTabela(TableView<List<Produto>> tabela, List<Produto> listaProdutos) {
-
-    }
-
     private void bloquearComponentesProduto(boolean estado) {
 
-        this.txtIdProduto.setDisable(estado);
+        //this.txtIdProduto.setDisable(estado);
         this.txtNomeProduto.setDisable(estado);
         this.txtQuantidadeProduto.setDisable(estado);
         this.txtPrecoProduto.setDisable(estado);
 
     }
-
+/*
     private void salvarProduto(Produto produto) {
         new ControlarProduto().salvar(produto);
     }
+ */  
+ 
+    private void preencherTabelaFinancas() {
+        List fin = Arrays.asList(
+                new Financa("TESTE01", 1, 10, 20),
+                new Financa("TESTE02", 1, 10, 20),
+                new Financa("TESTE03", 1, 10, 20),
+                new Financa("TESTE04", 1, 10, 20),
+                new Financa("TESTE05", 1, 10, 20),
+                new Financa("TESTE06", 1, 10, 20),
+                new Financa("TESTE07", 1, 10, 20),
+                new Financa("TESTE08", 1, 10, 20));
+
+        
+        TableColumn colunaDesc = new TableColumn<>("Descricao");
+        TableColumn colunaQtd = new TableColumn<>("Quantidade");
+        TableColumn colunaPreco = new TableColumn<>("Preco");
+        TableColumn colunaTotal = new TableColumn<>("Total");
+
+        /*
+        TableColumn colunaDesc = tabelaFinancas.getColumns().get(0);
+        TableColumn colunaQtd =  tabelaFinancas.getColumns().get(1);
+        TableColumn colunaPreco =  tabelaFinancas.getColumns().get(2);
+        TableColumn colunaTotal =  tabelaFinancas.getColumns().get(3);
+  */      
+        tabelaFinancas.getColumns().get(0).setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        tabelaFinancas.getColumns().get(1).setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        tabelaFinancas.getColumns().get(2).setCellValueFactory(new PropertyValueFactory<>("preco"));
+        tabelaFinancas.getColumns().get(3).setCellValueFactory(new PropertyValueFactory<>("total"));
+  /*
+        colunaDesc.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colunaQtd.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        colunaPreco.setCellValueFactory(new PropertyValueFactory<>("preco"));
+        colunaTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+    */  
+        tabelaFinancas.setItems(FXCollections.observableArrayList(fin));
+        //tabelaFinancas.getColumns().addAll(colunaDesc, colunaQtd, colunaPreco, colunaTotal);
+        
+    }
+
     
     @FXML
     private void gerarRelatorio(){
         int ano;
         
+        preencherTabelaFinancas();
+        
         try {
-            ano = Integer.parseInt(campoFinancasAno.getText());
+            //ano = Integer.parseInt(txtFinancasAno.getText());
         } catch (Exception e) {
-            exibirNofificacao("O campo 'Ano' deve conter apenas números");
+            exibirNofificacaoErro("O campo 'Ano' deve conter apenas números");
         }
         
     }
@@ -204,11 +258,11 @@ public class ControladorFormPrincipal implements Initializable {
 
         List<String> meses = Arrays.asList("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro");
         
-        this.comboboxFinancasDE.setItems(FXCollections.observableList(meses));
-        this.comboboxFinancasDE.getSelectionModel().select(0);
+        this.comboboxFinancasDe.setItems(FXCollections.observableList(meses));
+        this.comboboxFinancasDe.getSelectionModel().select(0);
         
-        this.comboboxFinancasPARA.setItems(FXCollections.observableList(meses));
-        this.comboboxFinancasPARA.getSelectionModel().select(0);
+        this.comboboxFinancasPara.setItems(FXCollections.observableList(meses));
+        this.comboboxFinancasPara.getSelectionModel().select(0);
         
         this.controlarProduto = new ControlarProduto();
 
@@ -233,7 +287,7 @@ public class ControladorFormPrincipal implements Initializable {
             try {
                 this.adicionarProduto();
             } catch (CampoVazioException cvex) {
-                this.exibirNofificacao(cvex.getMessage());
+                this.exibirNofificacaoErro(cvex.getMessage());
             }
         });
 
